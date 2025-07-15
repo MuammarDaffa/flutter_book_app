@@ -58,14 +58,33 @@ class _DetailPageState extends State<DetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: Image.network(widget.book.thumbnail, width: 150)),
+            Center(
+              child: widget.book.thumbnail.startsWith('http')
+                  ? Image.network(
+                      widget.book.thumbnail,
+                      width: 150,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.broken_image),
+                    )
+                  : Image.asset(
+                      widget.book.thumbnail,
+                      width: 150,
+                      fit: BoxFit.cover,
+                    ),
+            ),
             const SizedBox(height: 16),
             Text(widget.book.title,
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             Text('Penulis: ${widget.book.authors}'),
             const SizedBox(height: 16),
-            Text(widget.book.description ?? 'Tidak ada deskripsi'),
+            Text(
+              (widget.book.description != null &&
+                      widget.book.description!.trim().isNotEmpty)
+                  ? widget.book.description!
+                  : 'Tidak ada deskripsi',
+            ),
           ],
         ),
       ),

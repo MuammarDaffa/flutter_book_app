@@ -11,29 +11,31 @@ class Book {
     this.description,
   });
 
-  // Convert from JSON (Google Books API)
+  // ✅ Untuk parsing dari Google Books API
   factory Book.fromJson(Map<String, dynamic> json) {
-    final info = json['volumeInfo'];
+    final volumeInfo = json['volumeInfo'] ?? {};
+    final imageLinks = volumeInfo['imageLinks'] ?? {};
+
     return Book(
-      title: info['title'] ?? 'No Title',
-      authors: (info['authors'] as List?)?.join(', ') ?? 'Unknown Author',
-      thumbnail:
-          info['imageLinks']?['thumbnail'] ?? 'https://via.placeholder.com/150',
-      description: info['description'],
+      title: volumeInfo['title'] ?? 'No Title',
+      authors: (volumeInfo['authors'] as List?)?.join(', ') ?? 'Unknown Author',
+      thumbnail: imageLinks['thumbnail'] ?? 'assets/images/default_cover.png',
+      // fallback
+      description: volumeInfo['description'] ?? '',
     );
   }
 
-  // Convert to SQLite Map
+  // ✅ Untuk menyimpan ke database SQLite
   Map<String, dynamic> toMap() {
     return {
       'title': title,
       'authors': authors,
       'thumbnail': thumbnail,
-      'description': description,
+      'description': description ?? '',
     };
   }
 
-  // Convert from SQLite Map
+  // ✅ Untuk mengambil dari database SQLite
   factory Book.fromMap(Map<String, dynamic> map) {
     return Book(
       title: map['title'],
