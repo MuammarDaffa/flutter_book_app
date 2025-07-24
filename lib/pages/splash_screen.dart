@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Icon(Icons.menu_book, size: 80, color: Colors.blue),
             SizedBox(height: 16),
             Text(
-              "Book App",
+              "BacaYuk!",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),

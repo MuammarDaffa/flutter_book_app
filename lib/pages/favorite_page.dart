@@ -14,9 +14,17 @@ class _FavoritePageState extends State<FavoritePage> {
   late Future<List<Book>> _favoriteBooks;
 
   @override
-  void initState() {
-    super.initState();
-    _favoriteBooks = DBHelper.getFavorites();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setState(() {
+      _favoriteBooks = DBHelper.getFavorites();
+    });
+  }
+
+  void _loadFavorites() {
+    setState(() {
+      _favoriteBooks = DBHelper.getFavorites();
+    });
   }
 
   @override

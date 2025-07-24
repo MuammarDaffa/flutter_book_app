@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'pages/splash_screen.dart';
 import 'pages/home_page.dart';
 import 'pages/favorite_page.dart';
 
@@ -16,6 +15,7 @@ class BookApp extends StatefulWidget {
 
 class _BookAppState extends State<BookApp> {
   ThemeMode _themeMode = ThemeMode.light;
+  int _selectedIndex = 0;
 
   void toggleTheme() {
     setState(() {
@@ -24,11 +24,22 @@ class _BookAppState extends State<BookApp> {
     });
   }
 
+  final List<Widget> _pages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _pages.addAll([
+      HomePage(toggleTheme: toggleTheme),
+      const FavoritePage(),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Aplikasi Buku',
       debugShowCheckedModeBanner: false,
+      themeMode: _themeMode,
       theme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: Colors.blue,
@@ -39,13 +50,25 @@ class _BookAppState extends State<BookApp> {
         colorSchemeSeed: Colors.blue,
         brightness: Brightness.dark,
       ),
-      themeMode: _themeMode,
-      initialRoute: '/',
-      routes: {
-        '/': (_) => const SplashScreen(), // <- Splash screen
-        '/home': (_) => HomePage(toggleTheme: toggleTheme),
-        '/favorites': (_) => const FavoritePage(),
-      },
+      home: Scaffold(
+        body: _pages[_selectedIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (index) {
+            setState(() => _selectedIndex = index);
+          },
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "Home",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              label: "Favorite",
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/book.dart';
-import '../pages/detail_page.dart'; // ⬅️ import halaman detail
+import '../services/db_helper.dart';
+import '../pages/detail_page.dart';
 
 class BookCard extends StatelessWidget {
   final Book book;
@@ -9,55 +10,55 @@ class BookCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // ⬅️ Navigasi ke detail ketika buku diklik
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => DetailPage(book: book),
+    return Container(
+      width: 140,
+      margin: const EdgeInsets.only(right: 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  book.thumbnail,
+                  height: 160,
+                  width: 120,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.broken_image),
+                ),
+              ),
+              Positioned(
+                top: 5,
+                right: 5,
+                child: IconButton(
+                  icon: const Icon(Icons.favorite_border, color: Colors.red),
+                  onPressed: () async {
+                    await DBHelper.insertBook(book);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Buku ditambahkan ke favorit')),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        );
-      },
-      child: Container(
-        width: 120,
-        margin: const EdgeInsets.only(right: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: book.thumbnail.startsWith('http')
-                  ? Image.network(
-                      book.thumbnail,
-                      height: 160,
-                      width: 120,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.broken_image),
-                    )
-                  : Image.asset(
-                      book.thumbnail,
-                      height: 160,
-                      width: 120,
-                      fit: BoxFit.cover,
-                    ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              book.title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-            ),
-            Text(
-              book.authors,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 10, color: Colors.grey),
-            ),
-          ],
-        ),
+          const SizedBox(height: 4),
+          Text(
+            book.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+          Text(
+            book.authors,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 10, color: Colors.grey),
+          ),
+        ],
       ),
     );
   }
